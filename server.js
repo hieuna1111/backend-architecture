@@ -1,4 +1,5 @@
 const app = require('./src/app');
+const { stopMonitoring } = require('./src//helpers/check.connect');
 
 const PORT = 3055;
 
@@ -7,6 +8,12 @@ const server = app.listen(PORT, () => {
 });
 
 process.on('SIGINT', () => {
-  server.close(() => console.log(`Exit Server Express`));
+  server.close(() => {
+    if (1 === 1) {
+      stopMonitoring();
+    }
+    console.log(`Clear intervals check overload database success.`);
+    console.log(`Exit Server Express`);
+  });
   // notify.send(...ping);
 });
