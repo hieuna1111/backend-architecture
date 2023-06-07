@@ -15,7 +15,10 @@ app.use(compression());
 // init db
 require('./databases/init.mongodb');
 const { checkOverLoad } = require('./helpers/check.connect');
-checkOverLoad();
+// TODO: neu env === dev
+if (1 === 1) {
+  checkOverLoad();
+}
 
 // init routes
 app.get('/', (req, res, next) => {

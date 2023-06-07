@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 const os = require('os');
 const process = require('process');
-const _SECONDS = 5000;
+const _SECONDS = 15000;
 
 // count connection db
 const countConnection = () => {
@@ -11,9 +11,10 @@ const countConnection = () => {
   console.log(`Number of mongodb connections: ${numConnection}`);
 };
 
+let intervalId;
 // check over load db
 const checkOverLoad = () => {
-  setInterval(() => {
+  intervalId = setInterval(() => {
     const numConnection = mongoose.connections.length;
     console.log(`Active connections: ${numConnection}`);
 
@@ -30,4 +31,9 @@ const checkOverLoad = () => {
   }, _SECONDS); // monitor every 5 seconds
 };
 
-module.exports = { countConnection, checkOverLoad };
+// Call this function when you want to close the server/stop the monitoring
+const stopMonitoring = () => {
+  clearInterval(intervalId);
+};
+
+module.exports = { countConnection, checkOverLoad, stopMonitoring };
