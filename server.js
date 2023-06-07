@@ -1,7 +1,7 @@
 const app = require('./src/app');
 const { stopMonitoring } = require('./src//helpers/check.connect');
 
-const PORT = 3055;
+const PORT = process.env.PORT || 3055;
 
 const server = app.listen(PORT, () => {
   console.log(`WSV eCommerce start with ${PORT}`);

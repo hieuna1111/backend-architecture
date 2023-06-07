@@ -1,8 +1,11 @@
 'use strict';
 
 const mongoose = require('mongoose');
+const {
+  db: { username, password, name },
+} = require('../configs/config.mongodb');
 
-const connectionString = `mongodb+srv://hna-db-cloud:hna1234z@shopdev.snlabi9.mongodb.net/`;
+const connectionString = `mongodb+srv://${username}:${password}@shopdev.snlabi9.mongodb.net/${name}`;
 
 // building: singleton pattern class to connect database
 class Database {
@@ -21,7 +24,7 @@ class Database {
       .connect(connectionString, {
         maxPoolSize: 50,
       })
-      .then(() => console.log(`Connected Mongodb Success PRO`))
+      .then(() => console.log(`Connected Mongodb Success: env ${name}`))
       .catch((err) => console.log(`Error Connect! ${err}`));
   }
 
