@@ -7,13 +7,15 @@ const server = app.listen(PORT, () => {
   console.log(`WSV eCommerce start with ${PORT}`);
 });
 
-process.on('SIGINT', () => {
-  server.close(() => {
-    if (1 === 1) {
-      stopMonitoring();
-    }
-    console.log(`Clear intervals check overload database success.`);
-    console.log(`Exit Server Express`);
-  });
-  // notify.send(...ping);
+process.on('SIGTERM', () => {
+  if (server) {
+    server.close(() => {
+      // if (1 === 1) {
+      //   stopMonitoring();
+      //   console.log(`Clear intervals check overload database success.`);
+      // }
+      console.log(`Exit Server Express`);
+    });
+    // notify.send(...ping);
+  }
 });

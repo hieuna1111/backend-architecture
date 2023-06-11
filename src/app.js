@@ -12,23 +12,23 @@ app.use(morgan('dev'));
 app.use(helmet());
 // giam bang thong: compression
 app.use(compression());
+app.use(express.json());
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
 
 // init db
 require('./databases/init.mongodb');
 const { checkOverLoad } = require('./helpers/check.connect');
 // TODO: neu env === dev
-if (1 === 1) {
-  checkOverLoad();
-}
+// if (1 === 1) {
+//   checkOverLoad();
+// }
 
 // init routes
-app.get('/', (req, res, next) => {
-  const str = 'Hello toi la the nay the kia the no';
-  return res.status(200).json({
-    message: 'Welcome to backend architecture',
-    metadata: str.repeat(10000),
-  });
-});
+app.use('/', require('./routes/index'));
 
 // handling error
 
