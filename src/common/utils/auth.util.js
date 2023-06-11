@@ -1,6 +1,9 @@
 'use strict';
 
+const { get, includes } = require('lodash');
 const JWT = require('jsonwebtoken');
+const { API_KEY_HEADER } = require('../constant/apiKey.constant');
+const apiKeyModel = require('../../models/apiKey.model');
 
 /**
  *
@@ -34,6 +37,49 @@ const createTokenPair = async ({ payload, publicKeyObject, privateKey }) => {
   } catch (error) {}
 };
 
+const checkApiKey = async (req, res, next) => {
+  try {
+    const key = get(req, `headers[${API_KEY_HEADER.API_KEY}]`, '').toString();
+    if (!key) {
+      return res.status(403).json({
+        message: 'Forbidden Error',
+      });
+    }
+    // check objKey
+    const keyObject = await apiKeyModel.getApiKeyObjectByKey(key);
+    if (!keyObject) {
+      return res.status(403).json({
+        message: 'Forbidden Error',
+      });
+    }
+    req.keyObject = keyObject;
+    return next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+const checkPermission = (permissions) => {
+  return (req, res, next) => {
+    const permission = get(req, 'keyObject.permissions');
+    if (!permissions) {
+      return res.status(403).json({
+        message: 'Permission Denied',
+      });
+    }
+    console.log('permissions::', permissions);
+    const validPermission = includes(permissions, permission);
+    if (!validPermission) {
+      return res.status(403).json({
+        message: 'Permission Denied',
+      });
+    }
+    return next();
+  };
+};
+
 module.exports = {
   createTokenPair,
+  checkApiKey,
+  checkPermission,
 };
