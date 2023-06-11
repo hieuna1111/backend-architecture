@@ -7,17 +7,13 @@ const pick = require('../common/utils/pick.util');
 const TokenService = require('./token.service');
 const userModel = require('../models/user.model');
 const { USER_ROLE } = require('../common/constant/auth.constant');
+const { throwBadRequest } = require('../common/utils/handleError.util');
 
 class AuthService {
   static signUp = async ({ name, email, password }) => {
     // step 1: check email exists?
     const user = await userModel.findOne({ email }).lean();
-    if (user) {
-      return {
-        code: 'xxxx',
-        message: 'Users already registered!',
-      };
-    }
+    throwBadRequest(user, 'Users already registered!');
 
     const passwordHash = await bcrypt.hash(password, 10);
 
@@ -47,13 +43,7 @@ class AuthService {
         userId: newUser._id,
         publicKey,
       });
-
-      if (!publicKeyString) {
-        return {
-          code: 'xxxx',
-          message: 'publicKeyString error!',
-        };
-      }
+      throwBadRequest(!publicKeyString, 'publicKeyString error!');
 
       const publicKeyObject = crypto.createPublicKey(publicKeyString);
 
