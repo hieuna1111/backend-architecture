@@ -37,7 +37,6 @@ class AuthService {
           format: 'pem',
         },
       });
-      console.log({ privateKey, publicKey });
 
       const publicKeyString = await TokenService.createToken({
         userId: newUser._id,
@@ -48,19 +47,16 @@ class AuthService {
       const publicKeyObject = crypto.createPublicKey(publicKeyString);
 
       // created token pair
-      const tokens = await createTokenPair({
+      const { accessToken, refreshToken } = await createTokenPair({
         payload: { userId: newUser._id, email },
         publicKeyObject,
         privateKey,
       });
-      console.log(`Created Token Success::`, tokens);
 
       return {
-        code: 201,
-        metadata: {
-          user: pick(newUser, ['_id', 'name', 'email']),
-          tokens,
-        },
+        user: pick(newUser, ['_id', 'name', 'email']),
+        accessToken,
+        refreshToken,
       };
     }
 
