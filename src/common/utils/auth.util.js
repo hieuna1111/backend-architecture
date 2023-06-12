@@ -13,50 +13,45 @@ const apiKeyModel = require('../../models/apiKey.model');
  * @returns { accessToken, refreshToken }
  */
 const createTokenPair = async ({ payload, publicKeyObject, privateKey }) => {
-  try {
-    //accessToken
-    const accessToken = await JWT.sign(payload, privateKey, {
-      algorithm: 'RS256',
-      expiresIn: '2 days',
-    });
+  //accessToken
+  const accessToken = await JWT.sign(payload, privateKey, {
+    algorithm: 'RS256',
+    expiresIn: '2 days',
+  });
 
-    // refreshToken
-    const refreshToken = await JWT.sign(payload, privateKey, {
-      algorithm: 'RS256',
-      expiresIn: '7 days',
-    });
+  // refreshToken
+  const refreshToken = await JWT.sign(payload, privateKey, {
+    algorithm: 'RS256',
+    expiresIn: '7 days',
+  });
 
-    JWT.verify(accessToken, publicKeyObject, (err, decode) => {
-      if (err) {
-        console.error(`error verify token::`, err);
-      }
-      console.log(`decode token::`, decode);
-    });
+  // TODO: ket hop passport-jwt
+  JWT.verify(accessToken, publicKeyObject, (err, decode) => {
+    if (err) {
+      console.error(`error verify token::`, err);
+    }
+    console.log(`decode token::`, decode);
+  });
 
-    return { accessToken, refreshToken };
-  } catch (error) {}
+  return { accessToken, refreshToken };
 };
 
 const checkApiKey = async (req, res, next) => {
-  try {
-    const key = get(req, `headers[${API_KEY_HEADER.API_KEY}]`, '').toString();
-    if (!key) {
-      return res.status(403).json({
-        message: 'Forbidden Error',
-      });
-    }
-    // check objKey
-    const keyObject = await apiKeyModel.getApiKeyObjectByKey(key);
-    if (!keyObject) {
-      return res.status(403).json({
-        message: 'Forbidden Error',
-      });
-    }
-    req.keyObject = keyObject;
-    return next();
-  } catch (error) {
-    next(error);
+  const key = get(req, `headers[${API_KEY_HEADER.API_KEY}]`, '').toString();
+  if (!key) {
+    return res.status(403).json({
+      message: 'Forbidden Error',
+    });
   }
+  // check objKey
+  const keyObject = await apiKeyModel.getApiKeyObjectByKey(key);
+  if (!keyObject) {
+    return res.status(403).json({
+      message: 'Forbidden Error',
+    });
+  }
+  req.keyObject = keyObject;
+  return next();
 };
 
 const checkPermission = (permissions) => {
