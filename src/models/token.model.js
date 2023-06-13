@@ -8,7 +8,7 @@ const COLLECTION_NAME = 'Tokens';
 // Declare the Schema of the Mongo model
 var tokenSchema = new Schema(
   {
-    user: {
+    userId: {
       type: Schema.Types.ObjectId,
       require: true,
       ref: 'User',
