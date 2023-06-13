@@ -12,7 +12,7 @@ const apiKeyModel = require('../../models/apiKey.model');
  * @param {KeyObject} privateKey - made by crypto to register access token and refresh token
  * @returns { accessToken, refreshToken }
  */
-const createTokenPair = async ({ payload, publicKeyObject, privateKey }) => {
+const createTokenPair = async ({ payload, publicKey, privateKey }) => {
   //accessToken
   const accessToken = await JWT.sign(payload, privateKey, {
     algorithm: 'RS256',
@@ -26,7 +26,7 @@ const createTokenPair = async ({ payload, publicKeyObject, privateKey }) => {
   });
 
   // TODO: ket hop passport-jwt
-  JWT.verify(accessToken, publicKeyObject, (err, decode) => {
+  JWT.verify(accessToken, publicKey, (err, decode) => {
     if (err) {
       console.error(`error verify token::`, err);
     }

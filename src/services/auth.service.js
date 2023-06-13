@@ -44,12 +44,12 @@ class AuthService {
       });
       throwBadRequest(!publicKeyString, 'publicKeyString error!');
 
-      const publicKeyObject = crypto.createPublicKey(publicKeyString);
+      // const publicKeyObject = crypto.createPublicKey(publicKeyString);
 
       // created token pair
       const { accessToken, refreshToken } = await createTokenPair({
         payload: { userId: newUser._id, email },
-        publicKeyObject,
+        publicKey,
         privateKey,
       });
 
