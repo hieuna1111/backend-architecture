@@ -3,7 +3,8 @@
 const tokenModel = require('../models/token.model');
 
 class TokenService {
-  static createToken = async ({ userId, publicKey }) => {
+  // TODO: save token to redis instead of db
+  static saveToken = async ({ userId, publicKey }) => {
     const publicKeyString = publicKey.toString();
     const token = await tokenModel.create({
       userId,

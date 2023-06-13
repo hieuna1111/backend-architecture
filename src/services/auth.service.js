@@ -38,7 +38,7 @@ class AuthService {
         },
       });
 
-      const publicKeyString = await TokenService.createToken({
+      const publicKeyString = await TokenService.saveToken({
         userId: newUser._id,
         publicKey,
       });
