@@ -38,20 +38,20 @@ class AuthService {
         },
       });
 
-      const publicKeyString = await TokenService.saveToken({
-        userId: newUser._id,
-        publicKey,
-      });
-      throwBadRequest(!publicKeyString, 'publicKeyString error!');
-
-      // const publicKeyObject = crypto.createPublicKey(publicKeyString);
-
       // created token pair
       const { accessToken, refreshToken } = await createTokenPair({
         payload: { userId: newUser._id, email },
         publicKey,
         privateKey,
       });
+
+      const publicKeyString = await TokenService.saveToken({
+        method: 'create',
+        userId: newUser._id,
+        publicKey,
+        refreshToken,
+      });
+      throwBadRequest(!publicKeyString, 'Error, save token!');
 
       return {
         user: pick(newUser, ['_id', 'name', 'email']),

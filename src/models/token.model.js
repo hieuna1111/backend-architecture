@@ -17,9 +17,13 @@ var tokenSchema = new Schema(
       type: String,
       require: true,
     },
-    refreshToken: {
+    refreshTokensUsed: {
       type: Array,
       default: [],
+    },
+    refreshToken: {
+      type: String,
+      require: true,
     },
   },
   {
