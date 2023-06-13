@@ -9,12 +9,10 @@ class AuthController {
     const { user, accessToken, refreshToken } = await AuthService.signUp(
       req.body
     );
-    res.setHeader('Authorization', accessToken);
-    // TODO: refreshToken save to redis
     createdResponse({
       res,
       message: 'User account registration successful',
-      metadata: { user },
+      metadata: { user, tokens: { accessToken, refreshToken } },
     });
   });
 }

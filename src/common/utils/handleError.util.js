@@ -1,16 +1,25 @@
 const ErrorResponse = require('../handler/error.handler');
-const { StatusCodes } = require('../constant/httpStatusCode.constant');
+const {
+  StatusCodes,
+  ReasonPhrases,
+} = require('../constant/httpStatusCode.constant');
 
-const throwBadRequest = (condition, message) => {
+const databaseError = (condition, message = ReasonPhrases.BAD_GATEWAY) => {
+  if (condition) {
+    throw new ErrorResponse(StatusCodes.BAD_GATEWAY, message);
+  }
+};
+
+const throwBadRequest = (condition, message = ReasonPhrases.BAD_REQUEST) => {
   if (condition) {
     throw new ErrorResponse(StatusCodes.BAD_REQUEST, message);
   }
 };
 
-const throwConflictRequest = (condition, message) => {
+const throwConflictRequest = (condition, message = ReasonPhrases.CONFLICT) => {
   if (condition) {
     throw new ErrorResponse(StatusCodes.CONFLICT, message);
   }
 };
 
-module.exports = { throwBadRequest, throwConflictRequest };
+module.exports = { databaseError, throwBadRequest, throwConflictRequest };
