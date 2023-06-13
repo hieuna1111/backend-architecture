@@ -7,7 +7,10 @@ const pick = require('../common/utils/pick.util');
 const TokenService = require('./token.service');
 const userModel = require('../models/user.model');
 const { USER_ROLE } = require('../common/constant/auth.constant');
-const { throwBadRequest } = require('../common/utils/handleError.util');
+const {
+  throwBadRequest,
+  databaseError,
+} = require('../common/utils/handleError.util');
 
 class AuthService {
   static signUp = async ({ name, email, password }) => {
@@ -23,46 +26,39 @@ class AuthService {
       password: passwordHash,
       roles: [USER_ROLE.RESTAURANT_OWNER],
     });
+    databaseError(!newUser, 'New user not registered yet!');
 
-    if (newUser) {
-      // created privateKey, publicKey
-      const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
-        modulusLength: 4096,
-        publicKeyEncoding: {
-          type: 'pkcs1', // Public Key CryptoGraphic KeyStore
-          format: 'pem',
-        },
-        privateKeyEncoding: {
-          type: 'pkcs1', // Public Key CryptoGraphic KeyStore
-          format: 'pem',
-        },
-      });
+    // created privateKey, publicKey
+    const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
+      modulusLength: 4096,
+      publicKeyEncoding: {
+        type: 'pkcs1', // Public Key CryptoGraphic KeyStore
+        format: 'pem',
+      },
+      privateKeyEncoding: {
+        type: 'pkcs1', // Public Key CryptoGraphic KeyStore
+        format: 'pem',
+      },
+    });
 
-      const publicKeyString = await TokenService.createToken({
-        userId: newUser._id,
-        publicKey,
-      });
-      throwBadRequest(!publicKeyString, 'publicKeyString error!');
+    // created token pair
+    const { accessToken, refreshToken } = await createTokenPair({
+      payload: { userId: newUser._id, email },
+      publicKey,
+      privateKey,
+    });
 
-      const publicKeyObject = crypto.createPublicKey(publicKeyString);
-
-      // created token pair
-      const { accessToken, refreshToken } = await createTokenPair({
-        payload: { userId: newUser._id, email },
-        publicKeyObject,
-        privateKey,
-      });
-
-      return {
-        user: pick(newUser, ['_id', 'name', 'email']),
-        accessToken,
-        refreshToken,
-      };
-    }
+    const publicKeyString = await TokenService.saveToken({
+      userId: newUser._id,
+      publicKey,
+      refreshToken,
+    });
+    throwBadRequest(!publicKeyString, 'Error, save token!');
 
     return {
-      code: 200,
-      metadata: null,
+      user: pick(newUser, ['_id', 'name', 'email']),
+      accessToken,
+      refreshToken,
     };
   };
 }
