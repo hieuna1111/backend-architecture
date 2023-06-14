@@ -2,7 +2,10 @@
 
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
-const { createTokenPair } = require('../common/utils/auth.util');
+const {
+  createTokenPair,
+  generateKeyPairSync,
+} = require('../common/utils/auth.util');
 const pick = require('../common/utils/pick.util');
 const TokenService = require('./token.service');
 const userModel = require('../models/user.model');
@@ -29,17 +32,7 @@ class AuthService {
     databaseError(!newUser, 'New user not registered yet!');
 
     // created privateKey, publicKey
-    const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
-      modulusLength: 4096,
-      publicKeyEncoding: {
-        type: 'pkcs1', // Public Key CryptoGraphic KeyStore
-        format: 'pem',
-      },
-      privateKeyEncoding: {
-        type: 'pkcs1', // Public Key CryptoGraphic KeyStore
-        format: 'pem',
-      },
-    });
+    const { publicKey, privateKey } = generateKeyPairSync();
 
     // created token pair
     const { accessToken, refreshToken } = await createTokenPair({
