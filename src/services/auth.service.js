@@ -2,7 +2,10 @@
 
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
-const { createTokenPair } = require('../common/utils/auth.util');
+const {
+  createTokenPair,
+  generateKeyPairSync,
+} = require('../common/utils/auth.util');
 const pick = require('../common/utils/pick.util');
 const TokenService = require('./token.service');
 const userModel = require('../models/user.model');
@@ -13,6 +16,46 @@ const {
 } = require('../common/utils/handleError.util');
 
 class AuthService {
+  /**
+   * 1 - check email in db
+   * 2 - match password
+   * 3 - create public key and private key
+   * 4 - generate access token and refresh token
+   * 5 - get data return login
+   */
+  static login = async ({ email, password, refreshToken = null }) => {
+    // 1.
+    const foundUser = await userModel.findUserByEmail(email);
+    throwBadRequest(!foundUser, 'Email is not registered!');
+    const { _id: userId } = foundUser;
+
+    // 2.
+    const match = bcrypt.compare(password, foundUser.password);
+    throwBadRequest(!match, 'Authentication error');
+
+    // 3.
+    const { publicKey, privateKey } = generateKeyPairSync();
+
+    // 4.
+    const tokens = await createTokenPair({
+      payload: { userId, email },
+      publicKey,
+      privateKey,
+    });
+
+    const publicKeyString = await TokenService.saveToken({
+      userId,
+      publicKey,
+      refreshToken: tokens.refreshToken,
+    });
+    throwBadRequest(!publicKeyString, 'Error, save token!');
+
+    return {
+      user: pick(foundUser, ['_id', 'name', 'email']),
+      tokens,
+    };
+  };
+
   static signUp = async ({ name, email, password }) => {
     // step 1: check email exists?
     const user = await userModel.findOne({ email }).lean();
@@ -27,29 +70,20 @@ class AuthService {
       roles: [USER_ROLE.RESTAURANT_OWNER],
     });
     databaseError(!newUser, 'New user not registered yet!');
+    const { _id: userId } = newUser;
 
     // created privateKey, publicKey
-    const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
-      modulusLength: 4096,
-      publicKeyEncoding: {
-        type: 'pkcs1', // Public Key CryptoGraphic KeyStore
-        format: 'pem',
-      },
-      privateKeyEncoding: {
-        type: 'pkcs1', // Public Key CryptoGraphic KeyStore
-        format: 'pem',
-      },
-    });
+    const { publicKey, privateKey } = generateKeyPairSync();
 
     // created token pair
     const { accessToken, refreshToken } = await createTokenPair({
-      payload: { userId: newUser._id, email },
+      payload: { userId, email },
       publicKey,
       privateKey,
     });
 
     const publicKeyString = await TokenService.saveToken({
-      userId: newUser._id,
+      userId,
       publicKey,
       refreshToken,
     });

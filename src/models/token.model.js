@@ -3,7 +3,7 @@
 const { model, Schema, Types } = require('mongoose'); // Erase if already required
 
 const DOCUMENT_NAME = 'Token';
-const COLLECTION_NAME = 'Tokens';
+const COLLECTION_NAME = 'tokens';
 
 // Declare the Schema of the Mongo model
 var tokenSchema = new Schema(

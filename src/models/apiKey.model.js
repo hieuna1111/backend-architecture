@@ -4,7 +4,7 @@ const { model, Schema } = require('mongoose'); // Erase if already required
 const { API_KEY_PERMISSION } = require('../common/constant/apiKey.constant');
 
 const DOCUMENT_NAME = 'ApiKey';
-const COLLECTION_NAME = 'ApiKeys';
+const COLLECTION_NAME = 'apiKeys';
 
 const apiKeyPermissionEnum = Object.values(API_KEY_PERMISSION);
 

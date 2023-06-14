@@ -1,9 +1,9 @@
 'use strict';
 
-const { model, Schema, Types } = require('mongoose'); // Erase if already required
+const { model, Schema } = require('mongoose'); // Erase if already required
 
 const DOCUMENT_NAME = 'User';
-const COLLECTION_NAME = 'Users';
+const COLLECTION_NAME = 'users';
 
 // Declare the Schema of the Mongo model
 var userSchema = new Schema(
@@ -41,6 +41,10 @@ var userSchema = new Schema(
     collection: COLLECTION_NAME,
   }
 );
+
+userSchema.statics.findUserByEmail = async function (email) {
+  return await this.findOne({ email }).lean(); // TODO: add filter by status or verify 
+};
 
 //Export the model
 module.exports = model(DOCUMENT_NAME, userSchema);

@@ -1,5 +1,6 @@
 'use strict';
 
+const crypto = require('crypto');
 const { get, includes } = require('lodash');
 const JWT = require('jsonwebtoken');
 const { API_KEY_HEADER } = require('../constant/apiKey.constant');
@@ -73,8 +74,24 @@ const checkPermission = (permissions) => {
   };
 };
 
+const generateKeyPairSync = () => {
+  const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+    modulusLength: 4096,
+    publicKeyEncoding: {
+      type: 'pkcs1', // Public Key CryptoGraphic KeyStore
+      format: 'pem',
+    },
+    privateKeyEncoding: {
+      type: 'pkcs1', // Public Key CryptoGraphic KeyStore
+      format: 'pem',
+    },
+  });
+  return { publicKey, privateKey };
+};
+
 module.exports = {
   createTokenPair,
   checkApiKey,
   checkPermission,
+  generateKeyPairSync,
 };
