@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 const { get, includes } = require('lodash');
 const JWT = require('jsonwebtoken');
-const { API_KEY_HEADER } = require('../constants/apiKey.constant');
+const headerParam = require('../constants/headerParam.constant');
 const apiKeyModel = require('../../models/apiKey.model');
 
 /**
@@ -38,7 +38,7 @@ const createTokenPair = async ({ payload, publicKey, privateKey }) => {
 };
 
 const checkApiKey = async (req, res, next) => {
-  const key = get(req, `headers[${API_KEY_HEADER.API_KEY}]`, '').toString();
+  const key = get(req, `headers[${headerParam.API_KEY}]`, '').toString();
   if (!key) {
     return res.status(403).json({
       message: 'Forbidden Error',

@@ -9,7 +9,7 @@ const {
 const pick = require('../common/utils/pick.util');
 const TokenService = require('./token.service');
 const userModel = require('../models/user.model');
-const { USER_ROLE } = require('../common/constants/auth.constant');
+const userRole = require('../common/constants/role.constant');
 const {
   throwBadRequest,
   databaseError,
@@ -67,7 +67,7 @@ class AuthService {
       name,
       email,
       password: passwordHash,
-      roles: [USER_ROLE.RESTAURANT_OWNER],
+      roles: [userRole.RESTAURANT_OWNER],
     });
     databaseError(!newUser, 'New user not registered yet!');
     const { _id: userId } = newUser;
