@@ -32,5 +32,13 @@ var tokenSchema = new Schema(
   }
 );
 
+tokenSchema.statics.findTokenByUserId = async function (userId) {
+  return await this.findOne({ userId: new Types.ObjectId(userId) }).lean();
+};
+
+tokenSchema.statics.removeTokenById = async function (id) {
+  return await this.findByIdAndRemove(id);
+};
+
 //Export the model
 module.exports = model(DOCUMENT_NAME, tokenSchema);
