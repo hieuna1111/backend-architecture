@@ -1,5 +1,5 @@
 const app = require('./src/app');
-const { stopMonitoring } = require('./src//helpers/check.connect');
+const { stopMonitoring } = require('./src/common/helpers/check.connect');
 
 const PORT = process.env.PORT || 3055;
 
