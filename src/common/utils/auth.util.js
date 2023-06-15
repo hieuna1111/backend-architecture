@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 const { get, includes } = require('lodash');
 const JWT = require('jsonwebtoken');
-const { API_KEY_HEADER } = require('../constant/apiKey.constant');
+const { API_KEY_HEADER } = require('../constants/apiKey.constant');
 const apiKeyModel = require('../../models/apiKey.model');
 
 /**

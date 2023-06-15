@@ -1,6 +1,6 @@
 'use strict';
 
-const catchAsync = require('../common/handler/catchAsync.handler');
+const catchAsync = require('../common/helpers/catchAsync.helper');
 const AuthService = require('../services/auth.service');
 const { createdResponse } = require('../common/utils/handleSuccess.util');
 

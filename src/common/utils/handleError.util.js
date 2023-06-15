@@ -1,8 +1,8 @@
-const ErrorResponse = require('../handler/error.handler');
+const ErrorResponse = require('../handlers/error.handler');
 const {
   StatusCodes,
   ReasonPhrases,
-} = require('../constant/httpStatusCode.constant');
+} = require('../constants/httpStatusCode.constant');
 
 const databaseError = (condition, message = ReasonPhrases.BAD_GATEWAY) => {
   if (condition) {

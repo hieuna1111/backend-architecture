@@ -22,7 +22,7 @@ app.use(
 
 // init db
 require('./databases/init.mongodb');
-const { checkOverLoad } = require('./common/helpers/check.connect');
+const { checkOverLoad } = require('./common/helpers/checkConnectionDb.helper');
 // TODO: neu env === dev
 // if (1 === 1) {
 //   checkOverLoad();
