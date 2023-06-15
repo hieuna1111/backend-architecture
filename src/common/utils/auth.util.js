@@ -5,6 +5,9 @@ const { get, includes } = require('lodash');
 const JWT = require('jsonwebtoken');
 const headerParam = require('../constants/headerParam.constant');
 const apiKeyModel = require('../../models/apiKey.model');
+const catchAsync = require('../helpers/catchAsync.helper');
+const { authFailureError, notFoundError } = require('./handleError.util');
+const tokenModel = require('../../models/token.model');
 
 /**
  *
@@ -38,7 +41,7 @@ const createTokenPair = async ({ payload, publicKey, privateKey }) => {
 };
 
 const checkApiKey = async (req, res, next) => {
-  const key = get(req, `headers[${headerParam.API_KEY}]`, '').toString();
+  const key = get(req, `headers[${headerParam.API_KEY}]`);
   if (!key) {
     return res.status(403).json({
       message: 'Forbidden Error',
@@ -89,7 +92,42 @@ const generateKeyPairSync = () => {
   return { publicKey, privateKey };
 };
 
+/**
+ * 1 - check userId missing ?
+ * 2 - get access token
+ * 3 - verify token
+ * 4 - check user in db
+ * 5 - check tokenStore with this userId
+ * 6 - OK ALL => return next()
+ */
+const authentication = catchAsync(async (req, res, next) => {
+  // 1.
+  const userId = get(req, `headers[${headerParam.USER_ID}]`);
+  authFailureError(!userId, 'Header is missing userId');
+
+  // 2.
+  const tokenStore = await tokenModel.findTokenByUserId(userId);
+  notFoundError(!tokenStore, 'Not found tokenStore');
+
+  // 3.
+  const accessToken = get(req, `headers[${headerParam.AUTHORIZATION}]`);
+  authFailureError(!accessToken, 'Header is missing accessToken');
+
+  try {
+    const decodeUser = JWT.verify(accessToken, tokenStore.publicKey);
+    authFailureError(
+      userId !== get(decodeUser, 'userId'),
+      'Decode accessToken failure'
+    );
+    req.tokenStoreId = get(tokenStore, '_id');
+    return next();
+  } catch (error) {
+    throw error;
+  }
+});
+
 module.exports = {
+  authentication,
   createTokenPair,
   checkApiKey,
   checkPermission,

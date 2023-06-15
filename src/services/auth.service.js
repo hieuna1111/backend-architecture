@@ -13,9 +13,17 @@ const userRole = require('../common/constants/role.constant');
 const {
   throwBadRequest,
   databaseError,
+  notFoundError,
 } = require('../common/utils/handleError.util');
+const tokenModel = require('../models/token.model');
 
 class AuthService {
+  static logout = async (tokenStoreId) => {
+    const delToken = await tokenModel.removeTokenById(tokenStoreId);
+    notFoundError(!delToken, 'Token is not exist');
+    return delToken;
+  };
+
   /**
    * 1 - check email in db
    * 2 - match password

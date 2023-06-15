@@ -4,9 +4,21 @@ const {
   ReasonPhrases,
 } = require('../constants/httpStatusCode.constant');
 
+const authFailureError = (condition, message = ReasonPhrases.BAD_GATEWAY) => {
+  if (condition) {
+    throw new ErrorResponse(StatusCodes.UNAUTHORIZED, message);
+  }
+};
+
 const databaseError = (condition, message = ReasonPhrases.BAD_GATEWAY) => {
   if (condition) {
     throw new ErrorResponse(StatusCodes.BAD_GATEWAY, message);
+  }
+};
+
+const notFoundError = (condition, message = ReasonPhrases.CONFLICT) => {
+  if (condition) {
+    throw new ErrorResponse(StatusCodes.NOT_FOUND, message);
   }
 };
 
@@ -22,4 +34,10 @@ const throwConflictRequest = (condition, message = ReasonPhrases.CONFLICT) => {
   }
 };
 
-module.exports = { databaseError, throwBadRequest, throwConflictRequest };
+module.exports = {
+  authFailureError,
+  databaseError,
+  notFoundError,
+  throwBadRequest,
+  throwConflictRequest,
+};
