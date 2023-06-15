@@ -1,12 +1,12 @@
 'use strict';
 
 const { model, Schema } = require('mongoose'); // Erase if already required
-const { API_KEY_PERMISSION } = require('../common/constants/apiKey.constant');
+const apiKeyPermission = require('../common/constants/apiKey.constant');
 
 const DOCUMENT_NAME = 'ApiKey';
 const COLLECTION_NAME = 'apiKeys';
 
-const apiKeyPermissionEnum = Object.values(API_KEY_PERMISSION);
+const apiKeyPermissionEnum = Object.values(apiKeyPermission);
 
 // Declare the Schema of the Mongo model
 var apiKeySchema = new Schema(
