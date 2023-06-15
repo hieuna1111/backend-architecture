@@ -1,6 +1,6 @@
 'use strict';
 
-const { OK, CREATED } = require('../handler/success.handler');
+const { OK, CREATED } = require('../handlers/success.handler');
 
 const okResponse = ({ message, metadata, res }) => {
   if (message || metadata) {

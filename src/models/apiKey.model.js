@@ -1,7 +1,7 @@
 'use strict';
 
 const { model, Schema } = require('mongoose'); // Erase if already required
-const { API_KEY_PERMISSION } = require('../common/constant/apiKey.constant');
+const { API_KEY_PERMISSION } = require('../common/constants/apiKey.constant');
 
 const DOCUMENT_NAME = 'ApiKey';
 const COLLECTION_NAME = 'apiKeys';

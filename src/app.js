@@ -17,12 +17,12 @@ app.use(express.json());
 app.use(
   express.urlencoded({
     extended: true,
-  }),
+  })
 );
 
 // init db
 require('./databases/init.mongodb');
-const { checkOverLoad } = require('./helpers/check.connect');
+const { checkOverLoad } = require('./common/helpers/checkConnectionDb.helper');
 // TODO: neu env === dev
 // if (1 === 1) {
 //   checkOverLoad();

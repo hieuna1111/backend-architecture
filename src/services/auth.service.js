@@ -9,7 +9,7 @@ const {
 const pick = require('../common/utils/pick.util');
 const TokenService = require('./token.service');
 const userModel = require('../models/user.model');
-const { USER_ROLE } = require('../common/constant/auth.constant');
+const { USER_ROLE } = require('../common/constants/auth.constant');
 const {
   throwBadRequest,
   databaseError,

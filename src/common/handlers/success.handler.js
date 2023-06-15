@@ -3,7 +3,7 @@
 const {
   StatusCodes,
   ReasonPhrases,
-} = require('../constant/httpStatusCode.constant');
+} = require('../constants/httpStatusCode.constant');
 
 class SuccessResponse {
   constructor({ message, statusCode, reasonStatusCode, metadata = {} }) {
