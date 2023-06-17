@@ -10,10 +10,12 @@ class AuthController {
   logout = catchAsync(async (req, res) => {
     const tokenStoreId = get(req, 'tokenStoreId');
     const delToken = await AuthService.logout(tokenStoreId);
+    const token = pick(delToken, ['_id', 'userId']);
+    Object.assign(token, { deletedCount: 1 });
     createdResponse({
       res,
       message: 'Logout successful',
-      metadata: { token: pick(delToken, ['_id', 'userId']) },
+      metadata: { token },
     });
   });
 
