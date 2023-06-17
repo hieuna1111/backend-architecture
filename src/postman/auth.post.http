@@ -6,7 +6,24 @@ Content-Type: application/json
 x-api-key: bc3665c46fbf18ca19ad696534ca80241384a202c230603b9dc5b2fd8b5c74f27812dbaaee87e4493cd53c9f92429ce2280a104181ccde3631e7aa7384ea4040
 
 {
-  "name": "user 7",
-  "email": "user7@gmail.com",
+  "name": "user test 03",
+  "email": "usertest03@gmail.com",
   "password": "12345678"
 }
+
+### login
+POST {{url_dev}}/auth/login
+Content-Type: application/json
+x-api-key: bc3665c46fbf18ca19ad696534ca80241384a202c230603b9dc5b2fd8b5c74f27812dbaaee87e4493cd53c9f92429ce2280a104181ccde3631e7aa7384ea4040
+
+{
+  "email": "usertest03@gmail.com",
+  "password": "12345678"
+}
+
+### logout
+POST {{url_dev}}/auth/logout
+Content-Type: application/json
+x-api-key: bc3665c46fbf18ca19ad696534ca80241384a202c230603b9dc5b2fd8b5c74f27812dbaaee87e4493cd53c9f92429ce2280a104181ccde3631e7aa7384ea4040
+x-client-id: 6489e0fc9800e6d253f0a120
+authorization: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDg5ZTBmYzk4MDBlNmQyNTNmMGExMjAiLCJlbWFpbCI6InVzZXJ0ZXN0MDFAZ21haWwuY29tIiwiaWF0IjoxNjg3MDA1MzM0LCJleHAiOjE2ODcxNzgxMzR9.ZCZGSWAr4YCcH_fj_0L6B96GOqMBuJ1dMc7nv3vhWdc2swG6gvZh33tLQZwL37KejbaJGakt70H3UoLLFq4QDqag50G3G07CFusUdmIAwDywGuSo2vs1EZ5zc3BSj6My9duvB4ck_cYLjD3OKqs2e1IIevj1zPZ0_UXXaG84Gxqw_Z-do627NeLK_KMJDLY_yzCMj9FktOc9jpdEM4HqOwhrAfxdovNEsitNSg7BC89i2_VU7r20tngQUH-G7en_1fumfN6jAXUNajwRHPJdFbID-bw2quKl74UBbYUzsx1TuO005ANje1Ibk4EErxN_BYV1MBZgE1e1sRARSB_gri_gsIoozJFeTQsmD_JTUURAhpB1yjvbv85h0t--IlYWFxBNCe-Ij65xR3YEPDHVwlkHl-6FDMHKdG-pMqfl66cQwU1V0ZlNkjzgvlSo1mmtn5FLylro69IZsJ3hgyvU7sepk0j4mxGM7YzoqcocUR5dFR-LYTNgeGGHr6nMylhu1UefqqkqU0WZZ7r_RM_o-aQ0N_ADRj1pbdRkIqLG672F4pT6nBchiCvTpOQpqgk6RmLskNACF_gdYfL7rzfXnGNmKIhncyDnaymrJToYRLXnYRg8o8j8UGyeotsWfisC9T-VI05i2lzfV1h1FQJwH_VfKrUmI6NAlv5KWt7LoYg
