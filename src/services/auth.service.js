@@ -5,7 +5,9 @@ const crypto = require('crypto');
 const {
   createTokenPair,
   generateKeyPairSync,
+  verifyJWT,
 } = require('../common/utils/auth.util');
+const ErrorResponse = require('../common/handlers/error.handler');
 const pick = require('../common/utils/pick.util');
 const TokenService = require('./token.service');
 const userModel = require('../models/user.model');
@@ -14,10 +16,73 @@ const {
   throwBadRequest,
   databaseError,
   notFoundError,
+  authFailureError,
 } = require('../common/utils/handleError.util');
 const tokenModel = require('../models/token.model');
+const StatusCodes = require('../common/constants/statusCodes.constant');
 
 class AuthService {
+  /**
+   * check token used?
+   */
+  static handleRefreshToken = async (refreshToken) => {
+    // check xem token da duoc su dung chua
+    const foundToken = await tokenModel.findTokenUsedByRefreshToken(
+      refreshToken
+    );
+
+    // neu co
+    if (foundToken) {
+      // decode
+      const { userId } = verifyJWT({
+        token: refreshToken,
+        keySecret: foundToken.privateKey,
+      });
+      // xoa token trong keyStore
+      await tokenModel.findTokenByUserIdAndRemove(userId);
+      throw new ErrorResponse(
+        StatusCodes.FORBIDDEN,
+        'Something wrong happen, please re-login'
+      );
+    }
+
+    // NO, wonderful
+    const holderToken = await tokenModel.findTokenByRefreshToken(refreshToken);
+    authFailureError(!holderToken, 'Refresh token invalid');
+
+    // verify token
+    const { userId, email } = verifyJWT({
+      token: refreshToken,
+      keySecret: holderToken.privateKey,
+    });
+    // check userId
+    const foundUser = await userModel.findUserByEmail(email);
+    authFailureError(!foundUser, 'User is not registered');
+
+    // create a new key pair
+    const tokens = await createTokenPair({
+      payload: { userId, email },
+      publicKey: holderToken.publicKey,
+      privateKey: holderToken.privateKey,
+    });
+
+    // update token
+    await tokenModel.updateOne(
+      {
+        _id: holderToken._id,
+      },
+      {
+        $set: { refreshToken: tokens.refreshToken },
+        $addToSet: { refreshTokensUsed: refreshToken },
+      }
+    );
+
+    return {
+      user: { userId, email },
+      tokens,
+    };
+  };
+
   static logout = async (tokenStoreId) => {
     const delToken = await tokenModel.removeTokenById(tokenStoreId);
     notFoundError(!delToken, 'Token is not exist');
@@ -54,6 +119,7 @@ class AuthService {
     const publicKeyString = await TokenService.saveToken({
       userId,
       publicKey,
+      privateKey,
       refreshToken: tokens.refreshToken,
     });
     throwBadRequest(!publicKeyString, 'Error, save token!');
@@ -93,6 +159,7 @@ class AuthService {
     const publicKeyString = await TokenService.saveToken({
       userId,
       publicKey,
+      privateKey,
       refreshToken,
     });
     throwBadRequest(!publicKeyString, 'Error, save token!');
