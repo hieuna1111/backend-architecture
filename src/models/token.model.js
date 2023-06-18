@@ -13,6 +13,10 @@ var tokenSchema = new Schema(
       require: true,
       ref: 'User',
     },
+    privateKey: {
+      type: String,
+      require: true,
+    },
     publicKey: {
       type: String,
       require: true,
@@ -34,6 +38,20 @@ var tokenSchema = new Schema(
 
 tokenSchema.statics.findTokenByUserId = async function (userId) {
   return await this.findOne({ userId: new Types.ObjectId(userId) }).lean();
+};
+
+tokenSchema.statics.findTokenUsedByRefreshToken = async function (
+  refreshToken
+) {
+  return await this.findOne({ refreshTokensUsed: refreshToken });
+};
+
+tokenSchema.statics.findTokenByRefreshToken = async function (refreshToken) {
+  return await this.findOne({ refreshToken });
+};
+
+tokenSchema.statics.findTokenByUserIdAndRemove = async function (userId) {
+  return await this.findOneAndRemove({ userId: new Types.ObjectId(userId) });
 };
 
 tokenSchema.statics.removeTokenById = async function (id) {

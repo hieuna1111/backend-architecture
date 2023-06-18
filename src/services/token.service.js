@@ -4,12 +4,18 @@ const tokenModel = require('../models/token.model');
 
 class TokenService {
   // TODO: save token to redis instead of db
-  static saveToken = async ({ userId, publicKey, refreshToken }) => {
+  static saveToken = async ({
+    userId,
+    publicKey,
+    privateKey,
+    refreshToken,
+  }) => {
     const filter = { userId },
       update = {
         userId,
         publicKey,
         refreshToken,
+        privateKey,
         refreshTokensUsed: [], // TODO
       },
       options = { upsert: true, new: true };
