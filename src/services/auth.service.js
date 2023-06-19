@@ -1,7 +1,7 @@
 'use strict';
 
 const bcrypt = require('bcrypt');
-const crypto = require('crypto');
+const { get, includes } = require('lodash');
 const {
   createTokenPair,
   generateKeyPairSync,
@@ -25,19 +25,10 @@ class AuthService {
   /**
    * check token used?
    */
-  static handleRefreshToken = async (refreshToken) => {
-    // check xem token da duoc su dung chua
-    const foundToken = await tokenModel.findTokenUsedByRefreshToken(
-      refreshToken
-    );
+  static renewToken = async ({ refreshToken, user, tokenStore }) => {
+    const { userId, email } = user;
 
-    // neu co
-    if (foundToken) {
-      // decode
-      const { userId } = verifyJWT({
-        token: refreshToken,
-        keySecret: foundToken.privateKey,
-      });
+    if (includes(get(tokenStore, 'refreshTokensUsed') || [], refreshToken)) {
       // xoa token trong keyStore
       await tokenModel.findTokenByUserIdAndRemove(userId);
       throw new ErrorResponse(
@@ -46,15 +37,11 @@ class AuthService {
       );
     }
 
-    // NO, wonderful
-    const holderToken = await tokenModel.findTokenByRefreshToken(refreshToken);
-    authFailureError(!holderToken, 'Refresh token invalid');
+    authFailureError(
+      get(tokenStore, 'refreshToken') !== refreshToken,
+      'Refresh token invalid'
+    );
 
-    // verify token
-    const { userId, email } = verifyJWT({
-      token: refreshToken,
-      keySecret: holderToken.privateKey,
-    });
     // check userId
     const foundUser = await userModel.findUserByEmail(email);
     authFailureError(!foundUser, 'User is not registered');
@@ -62,25 +49,22 @@ class AuthService {
     // create a new key pair
     const tokens = await createTokenPair({
       payload: { userId, email },
-      publicKey: holderToken.publicKey,
-      privateKey: holderToken.privateKey,
+      publicKey: tokenStore.publicKey,
+      privateKey: tokenStore.privateKey,
     });
 
     // update token
     await tokenModel.updateOne(
       {
-        _id: holderToken._id,
+        _id: tokenStore._id,
       },
       {
-        $set: { refreshToken: tokens.refreshToken },
-        $addToSet: { refreshTokensUsed: refreshToken },
+        $set: { refreshToken: tokens.refreshToken }, // update new refresh token
+        $addToSet: { refreshTokensUsed: refreshToken }, // save token used in blacklist
       }
     );
 
-    return {
-      user: { userId, email },
-      tokens,
-    };
+    return { user, tokens };
   };
 
   static logout = async (tokenStoreId) => {
