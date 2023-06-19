@@ -109,6 +109,23 @@ const authentication = catchAsync(async (req, res, next) => {
   const tokenStore = await tokenModel.findTokenByUserId(userId);
   notFoundError(!tokenStore, 'Not found tokenStore');
 
+  if (req.headers[headerParam.REFRESH_TOKEN]) {
+    const refreshToken = req.headers[headerParam.REFRESH_TOKEN];
+    try {
+      const decodeUser = JWT.verify(refreshToken, tokenStore.privateKey);
+      authFailureError(
+        userId !== get(decodeUser, 'userId'),
+        'Decode accessToken failure'
+      );
+      req.tokenStore = tokenStore;
+      req.user = decodeUser;
+      req.refreshToken = refreshToken;
+      return next();
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // 3.
   const accessToken = get(req, `headers[${headerParam.AUTHORIZATION}]`);
   authFailureError(!accessToken, 'Header is missing accessToken');

@@ -7,8 +7,12 @@ const { createdResponse } = require('../common/utils/handleSuccess.util');
 const pick = require('../common/utils/pick.util');
 
 class AuthController {
-  handleRefreshToken = catchAsync(async (req, res) => {
-    const data = await AuthService.handleRefreshToken(req.body.refreshToken);
+  renewToken = catchAsync(async (req, res) => {
+    const data = await AuthService.renewToken({
+      refreshToken: req.refreshToken,
+      user: req.user,
+      tokenStore: req.tokenStore,
+    });
     createdResponse({
       res,
       message: 'Renew a new pair token',
