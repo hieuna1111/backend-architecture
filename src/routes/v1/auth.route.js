@@ -6,14 +6,14 @@ const { authentication } = require('../../common/utils/auth.util');
 const router = express.Router();
 
 // sign up
-router.post('/auth/sign-up', authController.signUp);
+router.post('/sign-up', authController.signUp);
 // sing in
-router.post('/auth/login', authController.login);
+router.post('/login', authController.login);
 
 // authentication
 router.use(authentication);
 // check authentication after access logout
-router.post('/auth/logout', authController.logout);
-router.post('/auth/renew-token', authController.renewToken);
+router.post('/logout', authController.logout);
+router.post('/renew-token', authController.renewToken);
 
 module.exports = router;
