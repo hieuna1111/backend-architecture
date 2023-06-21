@@ -29,7 +29,7 @@ const { checkOverLoad } = require('./common/helpers/checkConnectionDb.helper');
 // }
 
 // init routes
-app.use('/', require('./routes/index'));
+app.use('/api/v1', require('./routes/v1/index'));
 
 // handling error
 app.use((req, res, next) => {
