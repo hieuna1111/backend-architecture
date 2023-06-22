@@ -5,9 +5,6 @@ const productController = require('../../../controllers/product.controller');
 const { authentication } = require('../../../common/utils/auth.util');
 const router = express.Router();
 
-// authentication
-router.use(authentication);
-
-router.post('/', productController.createProduct);
+router.post('/', authentication, productController.createProduct);
 
 module.exports = router;
