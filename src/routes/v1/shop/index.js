@@ -4,9 +4,6 @@ const express = require('express');
 const { authentication } = require('../../../common/utils/auth.util');
 const router = express.Router();
 
-// authentication
-router.use(authentication);
-
 const shopRoutes = [
   {
     path: '/products',

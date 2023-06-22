@@ -10,10 +10,8 @@ router.post('/sign-up', authController.signUp);
 // sing in
 router.post('/login', authController.login);
 
-// authentication
-router.use(authentication);
 // check authentication after access logout
-router.post('/logout', authController.logout);
-router.post('/renew-token', authController.renewToken);
+router.post('/logout', authentication, authController.logout);
+router.post('/renew-token', authentication, authController.renewToken);
 
 module.exports = router;

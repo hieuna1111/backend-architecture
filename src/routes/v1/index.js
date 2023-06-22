@@ -10,9 +10,7 @@ const {
 // check apiKey
 router.use(checkApiKey);
 // check permission
-router.use(checkPermission('1000'));
-
-// router.use('/auth', require('./auth.route'));
+router.use(checkPermission('1000')); // TODO: handle permission number
 
 const routeV1 = [
   {
@@ -28,7 +26,5 @@ const routeV1 = [
 routeV1.forEach((shopRoute) => {
   router.use(shopRoute.path, shopRoute.route);
 });
-
-// router.use('/v1/api/shops', require('./product.route.'));
 
 module.exports = router;
