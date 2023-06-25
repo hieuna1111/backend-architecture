@@ -4,7 +4,10 @@ const catchAsync = require('../common/helpers/catchAsync.helper');
 
 class ProductController {
   createProduct = catchAsync(async (req, res) => {
-    const data = await productService.createProduct(req.body.type, req.body);
+    const data = await productService.createProduct(req.body.type, {
+      ...req.body,
+      shopId: req.shopId,
+    });
     createdResponse({
       res,
       message: 'Create a new product successfully',
