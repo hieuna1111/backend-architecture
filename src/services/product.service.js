@@ -65,7 +65,7 @@ class Electronic extends Product {
   }
 }
 
-// 1. the old away
+// 1.
 /*
 class ProductFactory {
   static async createProduct(type, payload) {
