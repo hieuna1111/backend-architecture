@@ -1,7 +1,6 @@
 'use strict';
 
 const express = require('express');
-const { authentication } = require('../../../common/utils/auth.util');
 const router = express.Router();
 
 const shopRoutes = [
