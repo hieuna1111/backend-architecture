@@ -1,13 +1,14 @@
 'use strict';
 
 const crypto = require('crypto');
-const { get, includes } = require('lodash');
+const { get, includes, isNil } = require('lodash');
 const JWT = require('jsonwebtoken');
 const headerParam = require('../constants/headerParam.constant');
 const apiKeyModel = require('../../models/apiKey.model');
 const catchAsync = require('../helpers/catchAsync.helper');
 const { authFailureError, notFoundError } = require('./handleError.util');
 const tokenModel = require('../../models/token.model');
+const shopModel = require('../../models/shop.model');
 
 /**
  *
@@ -136,6 +137,11 @@ const authentication = catchAsync(async (req, res, next) => {
       userId !== get(decodeUser, 'userId'),
       'Decode accessToken failure'
     );
+
+    const shopId = req.shopId;
+    // verify shop belongs to user account
+    if (shopId) await _verifyShopBelongsToUser({ shopId, userId });
+
     req.tokenStoreId = get(tokenStore, '_id');
     return next();
   } catch (error) {
@@ -146,6 +152,16 @@ const authentication = catchAsync(async (req, res, next) => {
 const verifyJWT = ({ token, keySecret }) => {
   const payload = JWT.verify(token, keySecret);
   return payload;
+};
+
+// verify shop belongs to user account
+const _verifyShopBelongsToUser = async ({ shopId, userId }) => {
+  const shop = await shopModel.findById(shopId).lean();
+  notFoundError(!shop, `Not found shop by shopId: ${shopId}`);
+  notFoundError(
+    get(shop, 'userId').toString() !== userId,
+    `Shop don't belongs to userId: ${userId}`
+  );
 };
 
 module.exports = {
