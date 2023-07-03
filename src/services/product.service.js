@@ -6,6 +6,29 @@ const {
   electronicModel,
 } = require('../models/product.model');
 const { throwBadRequest } = require('../common/utils/handleError.util');
+const {
+  findAllDraftProductsForShop,
+} = require('../repositories/product.repository');
+
+// define factory class to create product
+class ProductFactory {
+  static productRegistry = {}; //key-class
+
+  static productRegistryType({ type, classRef }) {
+    ProductFactory.productRegistry[type] = classRef;
+  }
+
+  static async createProduct({ type, payload }) {
+    const productClass = ProductFactory.productRegistry[type];
+    throwBadRequest(!productClass, 'Invalid product type: ' + type);
+    return new productClass(payload).createProduct();
+  }
+
+  static async findAllDraftProductsForShop({ shopId, limit = 50, skip = 0 }) {
+    const query = { shopId, isDraft: true };
+    return await findAllDraftProductsForShop({ query, limit, skip });
+  }
+}
 
 // define base product class
 class Product {
@@ -80,21 +103,6 @@ class ProductFactory {
   }
 }
 */
-
-// define factory class to create product
-class ProductFactory {
-  static productRegistry = {}; //key-class
-
-  static productRegistryType({ type, classRef }) {
-    ProductFactory.productRegistry[type] = classRef;
-  }
-
-  static async createProduct({ type, payload }) {
-    const productClass = ProductFactory.productRegistry[type];
-    throwBadRequest(!productClass, 'Invalid product type: ' + type);
-    return new productClass(payload).createProduct();
-  }
-}
 
 ProductFactory.productRegistryType({
   type: 'Clothing',

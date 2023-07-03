@@ -6,5 +6,10 @@ const { authentication } = require('../../../common/utils/auth.util');
 const router = express.Router();
 
 router.post('/', authentication, productController.createProduct);
+router.get(
+  '/draft',
+  authentication,
+  productController.getAllDraftProductForShop
+);
 
 module.exports = router;
