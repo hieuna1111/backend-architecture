@@ -7,7 +7,11 @@ const {
 } = require('../models/product.model');
 const { throwBadRequest } = require('../common/utils/handleError.util');
 const {
-  findAllDraftProductsForShop,
+  searchProducts,
+  publishProduct,
+  unPublishProduct,
+  findAllDraftProducts,
+  findAllPublishProducts,
 } = require('../repositories/product.repository');
 
 // define factory class to create product
@@ -24,9 +28,26 @@ class ProductFactory {
     return new productClass(payload).createProduct();
   }
 
-  static async findAllDraftProductsForShop({ shopId, limit = 50, skip = 0 }) {
+  static async searchProducts(keySearch) {
+    return await searchProducts(keySearch);
+  }
+
+  static async publishProduct({ shopId, productId }) {
+    return await publishProduct({ shopId, productId });
+  }
+
+  static async unPublishProduct({ shopId, productId }) {
+    return await unPublishProduct({ shopId, productId });
+  }
+
+  static async findAllDraftProducts({ shopId, limit = 50, skip = 0 }) {
     const query = { shopId, isDraft: true };
-    return await findAllDraftProductsForShop({ query, limit, skip });
+    return await findAllDraftProducts({ query, limit, skip });
+  }
+
+  static async findAllPublishProducts({ shopId, limit = 50, skip = 0 }) {
+    const query = { shopId, isPublished: true };
+    return await findAllPublishProducts({ query, limit, skip });
   }
 }
 

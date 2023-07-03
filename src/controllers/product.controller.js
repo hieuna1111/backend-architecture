@@ -21,13 +21,58 @@ class ProductController {
     });
   });
 
-  getAllDraftProductForShop = catchAsync(async (req, res) => {
-    const data = await productService.findAllDraftProductsForShop({
+  searchProducts = catchAsync(async (req, res) => {
+    const { keySearch } = req.query;
+    const data = await productService.searchProducts(keySearch);
+    okResponse({
+      res,
+      message: 'Get list searching products successfully',
+      metadata: data,
+    });
+  });
+
+  publishProduct = catchAsync(async (req, res) => {
+    const data = await productService.publishProduct({
+      ...req.body,
+      shopId: req.shopId,
+    });
+    okResponse({
+      res,
+      message: 'Publish a product successfully',
+      metadata: data,
+    });
+  });
+
+  unPublishProduct = catchAsync(async (req, res) => {
+    const data = await productService.unPublishProduct({
+      ...req.body,
+      shopId: req.shopId,
+    });
+    okResponse({
+      res,
+      message: 'Unpublish a product successfully',
+      metadata: data,
+    });
+  });
+
+  getAllDraftProduct = catchAsync(async (req, res) => {
+    const data = await productService.findAllDraftProducts({
       shopId: req.shopId,
     });
     okResponse({
       res,
       message: 'Get list draft products successfully',
+      metadata: data,
+    });
+  });
+
+  getAllPublishProduct = catchAsync(async (req, res) => {
+    const data = await productService.findAllPublishProducts({
+      shopId: req.shopId,
+    });
+    okResponse({
+      res,
+      message: 'Get list publish products successfully',
       metadata: data,
     });
   });
