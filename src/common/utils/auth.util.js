@@ -6,7 +6,7 @@ const JWT = require('jsonwebtoken');
 const headerParam = require('../constants/headerParam.constant');
 const apiKeyModel = require('../../models/apiKey.model');
 const catchAsync = require('../helpers/catchAsync.helper');
-const { authFailureError, notFoundError } = require('./handleError.util');
+const { authFailureError, notFoundError, throwBadRequest } = require('./handleError.util');
 const tokenModel = require('../../models/token.model');
 const shopModel = require('../../models/shop.model');
 
@@ -140,7 +140,7 @@ const authentication = catchAsync(async (req, res, next) => {
 
     const shopId = req.shopId;
     // verify shop belongs to user account
-    if (shopId) await _verifyShopBelongsToUser({ shopId, userId });
+    if (shopId) req.shop = await _verifyShopBelongsToUser({ shopId, userId });
 
     req.tokenStoreId = get(tokenStore, '_id');
     return next();
@@ -158,10 +158,11 @@ const verifyJWT = ({ token, keySecret }) => {
 const _verifyShopBelongsToUser = async ({ shopId, userId }) => {
   const shop = await shopModel.findById(shopId).lean();
   notFoundError(!shop, `Not found shop by shopId: ${shopId}`);
-  notFoundError(
+  throwBadRequest(
     get(shop, 'userId').toString() !== userId,
     `Shop don't belongs to userId: ${userId}`
   );
+  return shop;
 };
 
 module.exports = {
