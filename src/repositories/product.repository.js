@@ -6,16 +6,13 @@ const shopStatus = require('../common/constants/shopStatus.constant');
 const { notFoundError } = require('../common/utils/handleError.util');
 
 const searchProducts = async (keySearch) => {
-  const regexSearch = new RegExp(keySearch);
-  const products = await productModel
-    .find(
-      {
-        $text: { $search: regexSearch },
-      },
-      { score: { $meta: 'textScore' } }
-    )
-    .sort({ score: { $meta: 'textScore' } })
-    .lean();
+  const query = { isPublished: true };
+  const meta = {};
+  if (keySearch) {
+    query.$text = { $search: new RegExp(keySearch) };
+    meta.score = { $meta: 'textScore' };
+  }
+  const products = await productModel.find(query, meta).sort(meta).lean();
   return products;
 };
 
