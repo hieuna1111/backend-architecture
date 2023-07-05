@@ -21,6 +21,11 @@ class ProductController {
     });
   });
 
+  /**
+   * @description: Searching products for passersby, no need authentication
+   * @param {*} keySearch
+   * @returns
+   */
   searchProducts = catchAsync(async (req, res) => {
     const { keySearch } = req.query;
     const data = await productService.searchProducts(keySearch);
