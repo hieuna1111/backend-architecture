@@ -1,19 +1,32 @@
 'use strict';
 
+const { uniqBy } = require('lodash');
 const { Types } = require('mongoose');
 const { productModel } = require('../models/product.model');
 const shopStatus = require('../common/constants/shopStatus.constant');
 const { notFoundError } = require('../common/utils/handleError.util');
 
+// TODO: using redis to improve query
 const searchProducts = async (keySearch) => {
   const query = { isPublished: true };
-  const meta = {};
-  if (keySearch) {
-    query.$text = { $search: new RegExp(keySearch) };
-    meta.score = { $meta: 'textScore' };
+
+  if (!keySearch) {
+    return await productModel.find(query).sort({ createdAt: -1 });
   }
-  const products = await productModel.find(query, meta).sort(meta).lean();
-  return products;
+
+  // full text search to search by description field in product model
+  const fullTextQuery = { $text: { $search: new RegExp(keySearch, 'i') } };
+  const meta = { score: { $meta: 'textScore' }, score: 0 };
+
+  const fullTextResults = await productModel
+    .find({ ...query, ...fullTextQuery }, meta)
+    .sort(meta);
+
+  const regexQuery = { name: { $regex: new RegExp(keySearch, 'i') } };
+
+  const regexResults = await productModel.find({ ...query, ...regexQuery });
+
+  return uniqBy([...fullTextResults, ...regexResults], 'id');
 };
 
 const publishProduct = async ({ shopId, productId }) => {
