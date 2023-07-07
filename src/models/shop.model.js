@@ -1,5 +1,6 @@
 'use strict';
 
+const toObject = require('./plugin/toObject');
 const { model, Schema } = require('mongoose'); // Erase if already required
 
 const DOCUMENT_NAME = 'Shop';
@@ -29,6 +30,8 @@ var shopSchema = new Schema(
     collection: COLLECTION_NAME,
   }
 );
+
+shopSchema.plugin(toObject);
 
 //Export the model
 module.exports = model(DOCUMENT_NAME, shopSchema);

@@ -1,5 +1,6 @@
 'use strict';
 
+const toObject = require('./plugin/toObject');
 const { model, Schema, Types } = require('mongoose'); // Erase if already required
 
 const DOCUMENT_NAME = 'Token';
@@ -57,6 +58,8 @@ tokenSchema.statics.findTokenByUserIdAndRemove = async function (userId) {
 tokenSchema.statics.removeTokenById = async function (id) {
   return await this.findByIdAndRemove(id);
 };
+
+tokenSchema.plugin(toObject);
 
 //Export the model
 module.exports = model(DOCUMENT_NAME, tokenSchema);
