@@ -1,5 +1,6 @@
 'use strict';
 
+const toObject = require('./plugin/toObject');
 const { model, Schema } = require('mongoose'); // Erase if already required
 const apiKeyPermission = require('../common/constants/apiKey.constant');
 
@@ -35,6 +36,8 @@ var apiKeySchema = new Schema(
 apiKeySchema.statics.getApiKeyObjectByKey = async function (key) {
   return await this.findOne({ key, status: true }).lean();
 };
+
+apiKeySchema.plugin(toObject);
 
 //Export the model
 module.exports = model(DOCUMENT_NAME, apiKeySchema);

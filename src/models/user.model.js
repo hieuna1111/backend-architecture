@@ -1,5 +1,6 @@
 'use strict';
 
+const toObject = require('./plugin/toObject');
 const { model, Schema } = require('mongoose'); // Erase if already required
 
 const DOCUMENT_NAME = 'User';
@@ -43,8 +44,10 @@ var userSchema = new Schema(
 );
 
 userSchema.statics.findUserByEmail = async function (email) {
-  return await this.findOne({ email }).lean(); // TODO: add filter by status or verify 
+  return await this.findOne({ email }).lean(); // TODO: add filter by status or verify
 };
+
+userSchema.plugin(toObject);
 
 //Export the model
 module.exports = model(DOCUMENT_NAME, userSchema);

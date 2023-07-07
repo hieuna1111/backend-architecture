@@ -3,6 +3,7 @@
 const { model, Schema } = require('mongoose');
 const { default: slugify } = require('slugify');
 require('../models/shop.model');
+const toObject = require('./plugin/toObject');
 
 const DOCUMENT_NAME = 'Product';
 const COLLECTION_NAME = 'products';
@@ -74,14 +75,16 @@ const productSchema = new Schema(
   }
 );
 
-// create index for search function
-productSchema.index({ name: 'text', description: 'text' });
+// create index for search function: full text search
+productSchema.index({ description: 'text' });
 
 // Document middleware: run before .save() and .create() methods
 productSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
+
+productSchema.plugin(toObject);
 
 const clothingSchema = new Schema(
   {
