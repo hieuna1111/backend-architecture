@@ -7,6 +7,9 @@ const {
 } = require('../common/utils/handleSuccess.util');
 const catchAsync = require('../common/helpers/catchAsync.helper');
 const omitByNullAndEmpty = require('../common/utils/omit.util');
+const {
+  converterPatchProductResponse,
+} = require('../converter/v1/product.converter');
 
 class ProductController {
   createProduct = catchAsync(async (req, res) => {
@@ -90,10 +93,10 @@ class ProductController {
       type: req.body.type,
       payload,
     });
+    const response = await converterPatchProductResponse(data);
     okResponse({
+      ...response,
       res,
-      message: 'Update product successfully',
-      metadata: data,
     });
   });
 }
