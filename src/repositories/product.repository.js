@@ -1,6 +1,6 @@
 'use strict';
 
-const { uniqBy } = require('lodash');
+const { uniqBy, has, get } = require('lodash');
 const { Types } = require('mongoose');
 const { productModel } = require('../models/product.model');
 const shopStatus = require('../common/constants/shopStatus.constant');
@@ -78,10 +78,20 @@ const findAllPublishProducts = async ({ query, limit, skip }) => {
   return await _queryProductByStatus({ query, limit, skip });
 };
 
+const updateProductById = async ({
+  productId,
+  payload,
+  model,
+  isNew = true,
+}) => {
+  return await model.findByIdAndUpdate(productId, payload, { new: isNew });
+};
+
 module.exports = {
   searchProducts,
   publishProduct,
   unPublishProduct,
   findAllDraftProducts,
   findAllPublishProducts,
+  updateProductById,
 };

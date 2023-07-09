@@ -1,18 +1,19 @@
+'use strict';
+
 const productService = require('../services/product.service');
 const {
   createdResponse,
   okResponse,
 } = require('../common/utils/handleSuccess.util');
 const catchAsync = require('../common/helpers/catchAsync.helper');
+const omitByNullAndEmpty = require('../common/utils/omit.util');
 
 class ProductController {
   createProduct = catchAsync(async (req, res) => {
+    const payload = omitByNullAndEmpty({ ...req.body, shopId: req.shopId });
     const data = await productService.createProduct({
       type: req.body.type,
-      payload: {
-        ...req.body,
-        shopId: req.shopId,
-      },
+      payload,
     });
     createdResponse({
       res,
@@ -78,6 +79,20 @@ class ProductController {
     okResponse({
       res,
       message: 'Get list publish products successfully',
+      metadata: data,
+    });
+  });
+
+  updateProduct = catchAsync(async (req, res) => {
+    const payload = omitByNullAndEmpty({ ...req.body, shopId: req.shopId });
+    const data = await productService.updateProduct({
+      productId: req.params.productId,
+      type: req.body.type,
+      payload,
+    });
+    okResponse({
+      res,
+      message: 'Update product successfully',
       metadata: data,
     });
   });
