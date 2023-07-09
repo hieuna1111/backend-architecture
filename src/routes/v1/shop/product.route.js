@@ -13,4 +13,6 @@ router.get('/search', productController.searchProducts);
 router.get('/draft', authentication, productController.getAllDraftProduct);
 router.get('/publish', authentication, productController.getAllPublishProduct);
 
+router.patch('/:productId', authentication, productController.updateProduct);
+
 module.exports = router;

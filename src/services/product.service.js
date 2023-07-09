@@ -12,7 +12,10 @@ const {
   unPublishProduct,
   findAllDraftProducts,
   findAllPublishProducts,
+  updateProductById,
 } = require('../repositories/product.repository');
+const { get } = require('lodash');
+const patchNestedObjectParser = require('../common/utils/nestedObjectParser');
 
 // define factory class to create product
 class ProductFactory {
@@ -49,6 +52,12 @@ class ProductFactory {
     const query = { shopId, isPublished: true };
     return await findAllPublishProducts({ query, limit, skip });
   }
+
+  static async updateProduct({ productId, type, payload }) {
+    const productClass = ProductFactory.productRegistry[type];
+    throwBadRequest(!productClass, 'Invalid product type: ' + type);
+    return new productClass(payload).updateProduct(productId);
+  }
 }
 
 // define base product class
@@ -77,6 +86,10 @@ class Product {
   async createProduct(productId) {
     return await productModel.create({ ...this, _id: productId });
   }
+
+  async updateProduct({ productId, payload }) {
+    return await updateProductById({ productId, payload, model: productModel });
+  }
 }
 
 class Clothing extends Product {
@@ -92,6 +105,23 @@ class Clothing extends Product {
 
     return newProduct;
   }
+
+  async updateProduct(productId) {
+    const payload = this;
+    const attributes = get(payload, 'attributes');
+    if (attributes) {
+      await updateProductById({
+        productId,
+        payload: attributes,
+        model: clothingModel,
+      });
+    }
+    const updatedProduct = await super.updateProduct({
+      productId,
+      payload: patchNestedObjectParser(payload),
+    });
+    return updatedProduct;
+  }
 }
 
 class Electronic extends Product {
@@ -106,6 +136,23 @@ class Electronic extends Product {
     throwBadRequest(!newProduct, 'Create a new product error');
 
     return newProduct;
+  }
+
+  async updateProduct(productId) {
+    const payload = this;
+    const attributes = get(payload, 'attributes');
+    if (attributes) {
+      await updateProductById({
+        productId,
+        payload: attributes,
+        model: electronicModel,
+      });
+    }
+    const updatedProduct = await super.updateProduct({
+      productId,
+      payload: patchNestedObjectParser(payload),
+    });
+    return updatedProduct;
   }
 }
 

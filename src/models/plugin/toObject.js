@@ -1,5 +1,7 @@
 'use strict';
 
+const { Types } = require('mongoose');
+
 // Define the plugin function
 const toObject = (schema) => {
   // Add the toObject transform option
@@ -11,7 +13,7 @@ const toObject = (schema) => {
       ret.id = ret._id.toString();
     }
 
-    // Convert id fields in arrays
+    // Convert id fields
     Object.keys(ret).forEach((key) => {
       if (Array.isArray(ret[key])) {
         ret[key].forEach((item) => {
@@ -19,6 +21,9 @@ const toObject = (schema) => {
             item.id = item._id.toString();
           }
         });
+      }
+      if (ret[key] instanceof Types.ObjectId) {
+        ret[key] = ret[key].toString();
       }
     });
   }

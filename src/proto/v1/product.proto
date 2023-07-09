@@ -1,0 +1,42 @@
+syntax = "proto3";
+package v1.product;
+
+message ClothingAttribute {
+  string shopId = 1;
+  string brand = 2;
+  string size = 3;
+  string material = 4;
+}
+
+message ElectronicAttribute {
+  string shopId = 1;
+  string brand = 2;
+  string size = 3;
+  string material = 4;
+}
+
+message Variation {
+
+}
+
+message Product {
+  string shopId = 1;
+  string name = 2;
+  string thumbnail = 3;
+  string description = 4;
+  double price = 5;
+  int32 quantity = 6;
+  string type = 7; // TODO: enum
+  string slug = 8;
+  double averageRating = 9;
+  repeated Variation variations = 10; // don't use
+  string isDraft = 11;
+  string isPublished = 12;
+  ClothingAttribute clothingAttribute = 13;
+  ElectronicAttribute electronicAttribute = 14;
+}
+
+message PatchProductResponse {
+  string message = 1;
+  Product metadata = 2;
+}
