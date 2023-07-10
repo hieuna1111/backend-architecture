@@ -15,7 +15,9 @@ const {
   updateProductById,
 } = require('../repositories/product.repository');
 const { get } = require('lodash');
+const { Types } = require('mongoose');
 const patchNestedObjectParser = require('../common/utils/nestedObjectParser');
+const { insertInventory } = require('../repositories/inventory.repository');
 
 // define factory class to create product
 class ProductFactory {
@@ -84,7 +86,13 @@ class Product {
 
   // create a new product
   async createProduct(productId) {
-    return await productModel.create({ ...this, _id: productId });
+    const newProduct = await productModel.create({ ...this, _id: productId });
+    await insertInventory({
+      productId: newProduct._id,
+      shopId: new Types.ObjectId(this.shopId),
+      stock: this.quantity,
+    });
+    return newProduct;
   }
 
   async updateProduct({ productId, payload }) {
