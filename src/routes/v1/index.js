@@ -21,6 +21,10 @@ const routeV1 = [
     path: '/shops',
     route: require('./shop'),
   },
+  {
+    path: '/carts',
+    route: require('./cart.route'),
+  },
 ];
 
 routeV1.forEach((shopRoute) => {
