@@ -87,6 +87,18 @@ const updateProductById = async ({
   return await model.findByIdAndUpdate(productId, payload, { new: isNew });
 };
 
+const findProducts = async ({ limit, sort, page, filter, select }) => {
+  const skip = (page - 1) * limit;
+  const sortBy = sort === 'ctime' ? { _id: -1 } : { _id: 1 };
+  return await productModel
+    .find(filter)
+    .sort(sortBy)
+    .skip(skip)
+    .limit(limit)
+    .select(select)
+    .lean();
+};
+
 module.exports = {
   searchProducts,
   publishProduct,
@@ -94,4 +106,5 @@ module.exports = {
   findAllDraftProducts,
   findAllPublishProducts,
   updateProductById,
+  findProducts,
 };

@@ -36,6 +36,11 @@ var userSchema = new Schema(
       type: Array,
       default: [],
     },
+    isOwnerShop: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   {
     timestamps: true,

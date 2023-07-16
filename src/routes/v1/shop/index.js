@@ -8,6 +8,10 @@ const shopRoutes = [
     path: '/products',
     route: require('./product.route'),
   },
+  {
+    path: '/discount-vouchers',
+    route: require('./discountVoucher.route'),
+  },
 ];
 
 shopRoutes.forEach((shopRoute) => {

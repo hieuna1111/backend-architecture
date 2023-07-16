@@ -10,6 +10,10 @@ const omitByNullAndEmpty = require('../common/utils/omit.util');
 const {
   converterPatchProductResponse,
 } = require('../converter/v1/product.converter');
+const {
+  getAmountAfterDiscountForProducts,
+  getProductsApplyByDiscountCode,
+} = require('../services/discountVoucher.service');
 
 class ProductController {
   createProduct = catchAsync(async (req, res) => {
@@ -97,6 +101,30 @@ class ProductController {
     okResponse({
       ...response,
       res,
+    });
+  });
+
+  getAmountAfterDiscountForProducts = catchAsync(async (req, res) => {
+    const data = await getAmountAfterDiscountForProducts({
+      ...req.body,
+      shopId: req.shopId,
+    });
+    okResponse({
+      res,
+      message: 'Get discount amount for product successfully',
+      metadata: data,
+    });
+  });
+
+  getProductsApplyByDiscountCode = catchAsync(async (req, res) => {
+    const data = await getProductsApplyByDiscountCode({
+      ...req.query,
+      shopId: req.shopId,
+    });
+    okResponse({
+      res,
+      message: 'Get products apply by discount code successfully',
+      metadata: data,
     });
   });
 }
