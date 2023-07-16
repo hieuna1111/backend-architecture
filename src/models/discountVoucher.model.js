@@ -46,18 +46,27 @@ var discountVoucherSchema = new Schema(
       type: Date,
       required: true,
     },
+    // tong so luong voucher phat hanh
     voucherNumber: {
       type: Number,
       required: true,
     },
+    // so luong da su duoc su dung
     voucherNumberUsed: {
       type: Number,
-      required: true,
+      min: [0, 'voucherNumberUsed must be greater than or equal to 0'],
     },
-    usersUsed: {
-      type: Array,
-      default: [],
-    },
+    // danh sach user da su dung
+    usersUsed: [
+      {
+        userId: {
+          type: String,
+        },
+        times: {
+          type: Number,
+        },
+      },
+    ],
     // moi user chi duoc phep su dung so luong voucher nhat dinh
     numberUsedPerUser: {
       type: Number,
@@ -77,6 +86,7 @@ var discountVoucherSchema = new Schema(
       required: true,
       enum: ['all', 'specific'],
     },
+    //neu appliesToProductType = specific thi se add productId to productIds
     productIds: {
       type: Array,
       default: [],
