@@ -40,7 +40,15 @@ const findAllDiscountCodesUnselected = async ({
     .lean();
 };
 
+const findDiscountsByCodes = async (codes) => {
+  return await discountVoucherModel.find({
+    code: { $in: codes },
+    isActive: true,
+  });
+};
+
 module.exports = {
+  findDiscountsByCodes,
   findAllDiscountCodesSelected,
   findAllDiscountCodesUnselected,
 };

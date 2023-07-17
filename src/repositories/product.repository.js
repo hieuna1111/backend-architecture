@@ -1,7 +1,8 @@
 'use strict';
 
-const { uniqBy, has, get } = require('lodash');
 const { Types } = require('mongoose');
+const { uniqBy, map } = require('lodash');
+const objectId = require('../common/utils/objectId.util');
 const { productModel } = require('../models/product.model');
 const shopStatus = require('../common/constants/shopStatus.constant');
 const { notFoundError } = require('../common/utils/handleError.util');
@@ -99,6 +100,13 @@ const findProducts = async ({ limit, sort, page, filter, select }) => {
     .lean();
 };
 
+const findProductsByProductIds = async (productIds) => {
+  return await productModel.find({
+    _id: { $in: map(productIds, (productId) => objectId(productId)) },
+    isPublished: true,
+  });
+};
+
 module.exports = {
   searchProducts,
   publishProduct,
@@ -107,4 +115,5 @@ module.exports = {
   findAllPublishProducts,
   updateProductById,
   findProducts,
+  findProductsByProductIds,
 };
