@@ -12,6 +12,9 @@ const {
 const {
   getAmountAfterDiscountForProducts,
 } = require('../services/discountVoucher.service');
+const { acquireLock, releaseLock } = require('../services/redis.service');
+const OrderModel = require('../models/order.model');
+const objectId = require('../common/utils/objectId.util');
 
 const getProductsAvailableInShop = ({ shopId, products, productsMapById }) => {
   const results = [];
@@ -138,6 +141,58 @@ class CheckoutService {
       checkoutOrder,
     };
   }
+
+  // order
+  static async orderByUser({
+    orderItems,
+    cartId,
+    userId,
+    userAddress = {},
+    userPayment = {},
+  }) {
+    const { newOrderItems, checkoutOrder } = await this.checkoutPreview({
+      cartId,
+      userId,
+      orderItems,
+    });
+
+    // check xem so luong co vuot ton kho hay khong
+    const products = flatMap(newOrderItems, 'products');
+    const acquireProducts = [];
+    for (const product of products) {
+      const { productId, quantity } = product;
+      const keyLock = await acquireLock({ productId, quantity, cartId });
+      acquireProducts.push(keyLock ? true : false);
+      if (keyLock) await releaseLock(keyLock);
+    }
+
+    throwBadRequest(acquireProducts.includes(false), 'Insufficient inventory');
+    const newOrder = await OrderModel.create({
+      userId: objectId(userId),
+      checkout: checkoutOrder,
+      shipInfo: userAddress,
+      payment: userPayment,
+      products: newOrderItems,
+    });
+
+    // neu insert thanh cong thi remove product trong gio hang
+    if (newOrder) {
+    }
+
+    return newOrder;
+  }
+
+  // [User]
+  static async getOrdersByUser() {}
+
+  // [User]
+  static async getOneOrderByUser() {}
+
+  // [User]
+  static async cancelOrderByUser() {}
+
+  // [Admin | Shop]
+  static async updateOrderStatusByShop() {}
 }
 
 module.exports = CheckoutService;
