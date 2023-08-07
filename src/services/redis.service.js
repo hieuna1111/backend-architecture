@@ -7,8 +7,8 @@ const {
   inventoryReservation,
 } = require('../repositories/inventory.repository');
 
-const pExpireAsync = promisify(redisClient.pExpire).bind(redisClient);
-const setExAsync = promisify(redisClient.setEx).bind(redisClient);
+const pExpireAsync = promisify(redisClient.expire).bind(redisClient);
+const setExAsync = promisify(redisClient.setex).bind(redisClient);
 
 // cach 2: co the su dung queue: kafka | rabbitMQ | redis queue
 // cach 1: su dung lock redis - khóa lạc quan
