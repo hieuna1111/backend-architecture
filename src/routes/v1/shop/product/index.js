@@ -1,9 +1,16 @@
 'use strict';
 
 const express = require('express');
-const productController = require('../../../controllers/product.controller');
-const { authentication } = require('../../../common/utils/auth.util');
+const productController = require('../../../../controllers/product.controller');
+const { authentication } = require('../../../../common/utils/auth.util');
 const router = express.Router();
+
+const ProductRoutes = [
+  {
+    path: '/:productId/comments',
+    route: require('./comment.route'),
+  },
+];
 
 router.route('/').post(authentication, productController.createProduct);
 
@@ -25,5 +32,9 @@ router.get(
   '/allowedToApplyDiscount',
   productController.getProductsApplyByDiscountCode
 );
+
+ProductRoutes.forEach((productRoute) => {
+  router.use(productRoute.path, productRoute.route);
+});
 
 module.exports = router;

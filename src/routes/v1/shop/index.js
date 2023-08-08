@@ -6,7 +6,7 @@ const router = express.Router();
 const shopRoutes = [
   {
     path: '/products',
-    route: require('./product.route'),
+    route: require('./product/index'),
   },
   {
     path: '/discount-vouchers',
