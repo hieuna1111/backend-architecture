@@ -10,4 +10,8 @@ router
   .post(authentication, commentController.createComment)
   .get(authentication, commentController.getCommentByParentId);
 
+router
+  .route('/:commentId')
+  .delete(authentication, commentController.deleteComments);
+
 module.exports = router;

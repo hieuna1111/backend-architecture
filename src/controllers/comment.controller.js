@@ -25,6 +25,14 @@ class CommentController {
       metadata: data,
     });
   });
+
+  deleteComments = catchAsync(async (req, res) => {
+    okResponse({
+      res,
+      message: 'Delete comments successfully!',
+      metadata: await CommentService.deleteComments(req.body),
+    });
+  });
 }
 
 module.exports = new CommentController();
