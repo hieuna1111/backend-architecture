@@ -8,7 +8,7 @@ const {
 } = require('../repositories/inventory.repository');
 
 const pExpireAsync = promisify(redisClient.expire).bind(redisClient);
-const setExAsync = promisify(redisClient.setex).bind(redisClient);
+const setNxAsync = promisify(redisClient.setnx).bind(redisClient);
 
 // cach 2: co the su dung queue: kafka | rabbitMQ | redis queue
 // cach 1: su dung lock redis - khóa lạc quan
@@ -21,7 +21,7 @@ const acquireLock = async ({ productId, quantity, cartId }) => {
   for (let i = 0; i < retryTimes; i++) {
     // tạo key mới, thang nao nam giu key nay thi moi dc vao thanh toan
     // @result {1 || 0}
-    const result = await setExAsync(key, `in_${cartId}`);
+    const result = await setNxAsync(key, `in_${cartId}`);
     console.log('result: ', result);
     // 1 =>  if no exist and create success
     if (result === 1) {
