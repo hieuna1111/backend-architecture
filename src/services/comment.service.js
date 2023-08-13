@@ -1,8 +1,12 @@
 'use strict';
 
-const { throwBadRequest } = require('../common/utils/handleError.util');
+const {
+  throwBadRequest,
+  notFoundError,
+} = require('../common/utils/handleError.util');
 const toObject = require('../common/utils/objectId.util');
 const CommentModel = require('../models/comment.model');
+const { productModel } = require('../models/product.model');
 /**
  * Add comment [User | Owner]
  * Get a list comments [User | Owner]
@@ -99,6 +103,46 @@ class CommentService {
       });
 
     return comments;
+  }
+
+  static async deleteComments({ commentId, productId }) {
+    // check the product exists
+    const foundProduct = await productModel.findById(productId);
+    notFoundError(!foundProduct, 'product not found');
+
+    // 1. xac dinh gia tri left va right cua commentId
+    const comment = await CommentModel.findById(commentId);
+    notFoundError(!comment, 'comment not found');
+
+    const leftValue = comment.commentLeft;
+    const rightValue = comment.commentRight;
+
+    // 2. tinh with
+    const width = rightValue - leftValue + 1;
+
+    // 3. xóa tất cả comment con và kể cả commentId
+    await CommentModel.deleteMany({
+      productId: toObject(productId),
+      commentLeft: { $gte: leftValue, $lte: rightValue },
+    });
+
+    // 4. cập nhật giá trị left và right còn lại
+    await CommentModel.updateMany(
+      {
+        productId: toObject(productId),
+        commentRight: { $gt: rightValue },
+      },
+      { $inc: { commentRight: -width } }
+    );
+    await CommentModel.updateMany(
+      {
+        productId: toObject(productId),
+        commentLeft: { $gt: rightValue },
+      },
+      { $inc: { commentLeft: -width } }
+    );
+
+    return true;
   }
 }
 
