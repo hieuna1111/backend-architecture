@@ -16,6 +16,10 @@ const shopRoutes = [
     path: '/inventories',
     route: require('./inventory.route'),
   },
+  {
+    path: '/notifications',
+    route: require('./notification.router'),
+  },
 ];
 
 shopRoutes.forEach((shopRoute) => {

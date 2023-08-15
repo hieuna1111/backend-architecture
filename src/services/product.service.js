@@ -18,6 +18,7 @@ const { get } = require('lodash');
 const { Types } = require('mongoose');
 const patchNestedObjectParser = require('../common/utils/nestedObjectParser');
 const { insertInventory } = require('../repositories/inventory.repository');
+const { pushNotificationToSystem } = require('./notification.service');
 
 // define factory class to create product
 class ProductFactory {
@@ -92,6 +93,21 @@ class Product {
       shopId: new Types.ObjectId(this.shopId),
       stock: this.quantity,
     });
+
+    // push notification to system collection
+    // bất đồng bộ
+    pushNotificationToSystem({
+      type: 'SHOP-001',
+      receivedId: 1, // TODO: apply userId
+      senderId: this.shopId,
+      options: {
+        productName: this.name,
+        shopName: this.shopId,
+      },
+    })
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+
     return newProduct;
   }
 
