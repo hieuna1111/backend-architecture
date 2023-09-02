@@ -27,4 +27,6 @@ const runConsumer = async () => {
   }
 };
 
-runConsumer().catch(console.error);
+runConsumer()
+  .then((res) => console.log(res))
+  .catch(console.error);

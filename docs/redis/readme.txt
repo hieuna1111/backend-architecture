@@ -68,11 +68,22 @@
     Bước 2: 
       MULTI
     Bước 3: 
-      (trường hợp ví dụ) INCRY key 1000 (nếu thực thi EXEC thì giá trị key lúc này là 1000)
+      (trường hợp ví dụ) INCRY key -1000 (nếu thực thi EXEC thì giá trị key lúc này là 1000)
     Bước 4: 
       Ở 1 instance khác, tôi sử dụng: SET key 3000
       => Câu lệnh: "INCRY key 1000" trong transaction sẽ bị hủy bỏ nếu thực hiện EXEC, và giá trị của key là 3000
-
+  
+  *******Lưu ý (đê tránh gặp lỗi)*******************************ub
+  
+    - Lệnh sử dụng watch và multi phải cùng nằm trong 1 instance
+  **************************************************************
   Trường hợp sử dụng: transaction đang cập nhật hàng tồn kho, thì có 1 lệnh nhập kho vào, transaction cập nhật số lượng tồn kho sẽ bị loại bỏ
 
-     
+............................................PUB/SUB.......................................
+ 
+- Trường hợp cụ thể như sau:
+  Một sản phẩm hết hàng, người dùng đăng ký nhận thông báo khi sản phẩm còn hàng trở lại
+- Hướng xử lý:
+  + Người dùng đăng ký: subscribe channel (channel là mã sản phẩm chẳng hạn)
+  + Khi sản phẩm được nhập hàng: publish channel
+      => lúc này những người đăng ký sẽ nhận được message 
