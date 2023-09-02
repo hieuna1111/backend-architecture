@@ -1,7 +1,7 @@
 'use strict';
 
 const amqp = require('amqplib');
-const message = 'hello, rabbitMQ for backend e-commerce';
+const message = 'New a product: Title abcde';
 
 const runProducer = async () => {
   try {
@@ -15,9 +15,15 @@ const runProducer = async () => {
     // send message to consumer channel
     channel.sendToQueue(queueName, Buffer.from(message));
     console.log(`message sended: ${message}`);
+    setTimeout(() => {
+      connection.close();
+      process.exit(0);
+    }, 500);
   } catch (error) {
     console.log(error);
   }
 };
 
-runProducer().catch(console.error);
+runProducer()
+  .then((res) => console.log(res))
+  .catch(console.error);
