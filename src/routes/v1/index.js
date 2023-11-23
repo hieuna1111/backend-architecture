@@ -29,6 +29,10 @@ const routeV1 = [
     path: '/checkouts',
     route: require('./checkout.route'),
   },
+  {
+    path: '/uploads',
+    route: require('./upload.route'),
+  },
 ];
 
 routeV1.forEach((shopRoute) => {
