@@ -13,7 +13,7 @@ router.get('/ping', (req, res) => {
         <br />
         <center>
             <h1>
-                Hello backend architecture api from AWS EC2
+                Hello backend architecture api To AWS EC2
             </h1>
         </center>
     `);
