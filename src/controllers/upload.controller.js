@@ -7,6 +7,7 @@ const {
   uploadImageFromUrl,
   uploadImageFromLocal,
   uploadMultipleImageFromLocal,
+  uploadFileFromLocalToAwsS3,
 } = require('../services/upload.service');
 const { throwBadRequest } = require('../common/utils/handleError.util');
 
@@ -38,6 +39,16 @@ class UploadController {
       res,
       message: 'Upload images array successfully',
       metadata: await uploadMultipleImageFromLocal({ files }),
+    });
+  });
+
+  uploadFileFromLocalToS3 = catchAsync(async (req, res) => {
+    const { file } = req;
+    throwBadRequest(!file, 'file not attached');
+    okResponse({
+      res,
+      message: 'Upload file to s3 successfully',
+      metadata: await uploadFileFromLocalToAwsS3({ file }),
     });
   });
 }

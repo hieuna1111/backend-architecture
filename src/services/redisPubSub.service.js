@@ -2,8 +2,16 @@ const redis = require('redis');
 
 class RedisPubSubService {
   constructor() {
-    this.subscriber = redis.createClient();
-    this.publisher = redis.createClient();
+    this.subscriber = redis.createClient({
+      host: process.env.REDIS_HOST,
+      port: process.env.REDIS_PORT,
+      password: process.env.REDIS_PASSWORD,
+    });
+    this.publisher = redis.createClient({
+      host: process.env.REDIS_HOST,
+      port: process.env.REDIS_PORT,
+      password: process.env.REDIS_PASSWORD,
+    });
   }
 
   publish(channel, message) {

@@ -1,6 +1,35 @@
 'use strict';
 
+const crypto = require('crypto');
 const cloudinary = require('../configs/cloudinary.config');
+const {
+  awsS3,
+  PutObjectCommand,
+  GetObjectCommand,
+} = require('../configs/awsS3.config');
+
+const randomImageName = () => crypto.randomBytes(16).toString('hex');
+
+// UPLOAD AWS S3
+
+const uploadFileFromLocalToAwsS3 = async ({ file }) => {
+  try {
+    const imageName = randomImageName();
+    const putCommand = new PutObjectCommand({
+      Bucket: process.env.AWS_BUCKET_NAME_S3,
+      Key: imageName,
+      Body: file?.buffer,
+      ContentType: 'image/jpeg',
+    });
+    await awsS3.send(putCommand);
+    // export url
+    return `${process.env.AWS_CLOUD_FRONT_DISTRIBUTION_URL}/${imageName}`;
+  } catch (error) {
+    console.log('Error uploading file to s3 client:' + error);
+  }
+};
+
+// UPLOAD AWS S3
 
 // 1. upload image from url
 const uploadImageFromUrl = async () => {
@@ -71,6 +100,7 @@ const uploadMultipleImageFromLocal = async ({
 };
 
 module.exports = {
+  uploadFileFromLocalToAwsS3,
   uploadImageFromUrl,
   uploadImageFromLocal,
   uploadMultipleImageFromLocal,

@@ -3,7 +3,7 @@
 const express = require('express');
 const UploadController = require('../../controllers/upload.controller');
 const { authentication } = require('../../common/utils/auth.util');
-const { uploadDisk } = require('./../../configs/multer.config');
+const { uploadDisk, uploadMemory } = require('./../../configs/multer.config');
 const router = express.Router();
 
 router.post('/image', authentication, UploadController.uploadImage);
@@ -20,6 +20,15 @@ router.post(
   uploadDisk.array('files', 3),
   authentication,
   UploadController.uploadMultipleImages
+);
+
+// upload to s3
+
+router.post(
+  '/product/bucket',
+  uploadMemory.single('file'),
+  authentication,
+  UploadController.uploadFileFromLocalToS3
 );
 
 module.exports = router;
