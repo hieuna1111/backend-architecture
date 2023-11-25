@@ -7,6 +7,18 @@ const {
   checkPermission,
 } = require('../../common/utils/auth.util');
 
+router.get('/ping', (req, res) => {
+  return res.send(`
+        <br />
+        <br />
+        <center>
+            <h1>
+                Hello backend architecture api from AWS EC2
+            </h1>
+        </center>
+    `);
+});
+
 // check apiKey
 router.use(checkApiKey);
 // check permission
