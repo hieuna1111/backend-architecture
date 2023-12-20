@@ -21,8 +21,8 @@ app.use(
 );
 
 // test pub.sub redis
-require('./test/inventory.test');
-const productTest = require('./test/product.test');
+require('./test/pubsub/inventory.sub');
+const productTest = require('./test/pubsub/product.pub');
 productTest.purchaseProduct('product:001', 10);
 
 // init db
