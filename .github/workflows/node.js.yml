@@ -8,51 +8,35 @@ on:
     branches: [ "main" ]
 
 jobs:
-  checkout-code:
+  build:
+
     runs-on: self-hosted
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-  install-dependencies:
-    runs-on: self-hosted
-    needs: checkout-code
-    strategy:
-      matrix:
-        node-version: [16.x]
-    steps:
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
 
-  set-up-environment:
-    runs-on: self-hosted
-    needs: install-dependencies
-    steps:
+    - name: Install dependencies
+      run: npm ci
+
     - name: Set up environment variables
       run: echo "$ENV_FILE_CONTENT" > .env
       env:
         ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
+    
+    - name: testing
+      run: npm test
 
-  run-tests:
-    runs-on: self-hosted
-    needs: [install-dependencies, set-up-environment]
-    steps:
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - name: Run tests
-        run: npm test
-
-  start-application:
-    runs-on: self-hosted
-    needs: [install-dependencies, set-up-environment, run-tests]
-    steps:
-    - name: Start alive forever application
+    - name: start alive forever application
       run: /home/ubuntu/.nvm/versions/node/v16.20.1/bin/pm2 restart api-backend-architecture
