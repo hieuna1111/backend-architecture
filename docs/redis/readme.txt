@@ -12,7 +12,10 @@
   - lấy danh sách tất cả các phần tử trong list: LLRANGE key 0 -1 (0 là phần tử đầu, -1 là phần tử cuối)
 
   ***** Quan trọng **********
-  - cơ chế blocking của list, nếu ko tìm thấy message vào trong queue nó sẽ đợi cho tới khi tìm được phần tử: BLPOP key timeout
+  - cơ chế blocking của list:
+    + nếu ko tìm thấy message nào trong queue nó sẽ đợi cho tới khi tìm được phần tử: BLPOP key timeout
+    + nếu tìm tháy message: nó sẽ lấy ra phần tử đầu tiên
+    + đê tuân theo đúng thứ tự hãy sử dụng RPUSH để thêm data vào cuối mảng
   ****************
 
 4. redis sets

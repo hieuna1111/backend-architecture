@@ -7,16 +7,11 @@ const {
   checkPermission,
 } = require('../../common/utils/auth.util');
 
-router.get('/ping', (req, res) => {
-  return res.send(`
-        <br />
-        <br />
-        <center>
-            <h1>
-                Hello backend architecture api To AWS EC2
-            </h1>
-        </center>
-    `);
+router.get('/health-check', (req, res) => {
+  return res.send({
+    code: 200,
+    message: 'health check',
+  });
 });
 
 // check apiKey

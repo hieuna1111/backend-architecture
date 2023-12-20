@@ -28,11 +28,22 @@ var cartSchema = new Schema(
         }
       ]
     */
-    products: {
-      type: Array,
-      required: true,
-      default: [],
-    },
+    products: [
+      {
+        productId: {
+          type: String,
+        },
+        shopId: {
+          type: String,
+        },
+        quantity: {
+          type: Number,
+        },
+        price: {
+          type: Number,
+        },
+      },
+    ],
     countProduct: {
       type: Number,
       required: true,

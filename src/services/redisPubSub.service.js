@@ -26,11 +26,11 @@ class RedisPubSubService {
   }
 
   subscribe(channel, callback) {
-    this.subscriber.subscribe(channel, (err, count) => {
+    this.subscriber.subscribe(channel, (err, channelName) => {
       if (err) console.error('Failed to subscribe: %s', err.message);
       else {
         console.log(
-          `Subscribed successfully! This client is currently subscribed to ${count} channels.`
+          `Subscribed successfully! This client is currently subscribed to ${channelName} channels.`
         );
       }
     });

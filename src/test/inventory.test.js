@@ -10,6 +10,7 @@ class InventoryServiceTest {
 
   static updateInventory(channel, message) {
     console.log(`Channel ${channel} to update inventory ${message}`);
+    // DO SOMETHING ...
   }
 }
 
