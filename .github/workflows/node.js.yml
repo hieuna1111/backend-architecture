@@ -38,8 +38,5 @@ jobs:
     - name: testing
       run: npm test
 
-    - name: test pm2 exists
-      run: which pm2
-
     - name: start alive forever application
-      run: pm2 restart api-backend-architecture
+      run: /home/ubuntu/.nvm/versions/node/v16.20.1/bin/pm2 restart api-backend-architecture
