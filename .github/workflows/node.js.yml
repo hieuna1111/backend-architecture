@@ -39,4 +39,4 @@ jobs:
       run: npm test
 
     - name: start alive forever application
-      run: npm restart api-backend-architecture
+      run: pm2 restart api-backend-architecture
