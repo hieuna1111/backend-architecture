@@ -6,8 +6,6 @@ name: Node.js CI api-backend-architecture
 on:
   push:
     branches: [ "main" ]
-  repository_dispatch:
-    types: [secret_updated]
 
 jobs:
   build:
